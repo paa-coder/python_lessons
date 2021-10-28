@@ -5,77 +5,100 @@ def create_question(question, type):
         print("Ошибка: не корректно введено значение")
         create_question(question, type)
 
+def exit(question):
+    answer = None
+    while answer not in ["y", "n"]:
+        if answer != None:
+            print("accept only y or n")
+        answer = create_question(f"{question} [y/n]:", str)
+
+    return answer == "y"
 
 # 1
 
-example_string = "example_string"
-example_number = 100
-
-print(example_string,example_number,sep="\n")
-
-user_name = create_question(question="what is your name?",type=str)
-user_age = create_question(question="how old are you?",type=int)
-
-print(user_name,user_age,sep=" age:")
+list_types = [1, 1.1, "1", [1, 1], {1, 1}, (1, 1)];
+for i in list_types:
+    print(type(i))
 
 # 2
 
-seconds_count = create_question(question="How many secconds?",type=int)
+list_elements = [];
 
-def zero_first(num):
-    if(num<10):
-        return f"0{num}"
-    return f"{num}"
+while True:
+    list_elements.append(create_question("add element", str))
+    if exit("quite from list creating?"):
+        break
 
-houres = seconds_count//3600
-minutes = (seconds_count - houres*3600)//60
-seconds = seconds_count - houres*3600 - minutes*60;
+first_list_elements = list_elements[0::2]
+second_list_elements = list_elements[1::2]
 
-print(f"{zero_first(houres)}:{zero_first(minutes)}:{zero_first(seconds)}")
+for i in range(len(second_list_elements)):
+    first_list_elements.insert(i*2,second_list_elements[i])
+
+print("init list:", list_elements)
+print("result list:", first_list_elements)
 
 # 3
-user_number = create_question(question="get number?", type=int)
-print(int(f"{user_number}") + int(f"{user_number}{user_number}") + int(f"{user_number}{user_number}{user_number}"))
+
+mouths_list = ["зима", "зима", "весна", "весна", "весна", "лето", "лето", "лето", "осень", "осень", "осень", "зима"]
+mouths_dick = {"12": "зима","1": "зима", "2": "зима", "3": "весна", "4": "весна", "5": "весна", "6": "лето", "7": "лето",
+               "8": "лето", "9": "осень", "10": "осень", "11": "осень" }
+
+month=None
+while month not in range(1,13):
+    month=create_question("insert month",int)
+
+print("period from list",mouths_list[month-1])
+print("period from dict",mouths_dick[f"{month}"])
+
 
 #4
-user_number4 = create_question(question="get number?", type=int)
-biggest_num = 0
-for c in f"{user_number4}":
-    if biggest_num == 9:
+
+words = create_question("enter text",str).split();
+for i in range(len(words)):
+    print(f"word №{i+1} - {words[i][:10]}")
+
+#5
+
+rating_list = [7, 5, 3, 3, 2]
+
+while True:
+    rating_list.append(create_question("add element", int))
+    rating_list.sort(reverse=True)
+    print("updated rating:",rating_list)
+    if exit("quite from rate creating?"):
         break
-    next_int = int(c)
-    if next_int > biggest_num:
-        biggest_num = next_int
-print("Max number is:", biggest_num)
 
-# 5
+#6
 
-proceeds = create_question("What proceeds?", int)
-costs = create_question("What costs?", int)
-profit = proceeds - costs;
+products = []
 
-if profit > 0:
-    print("прибыль — выручка больше издержек")
-    rent = profit / proceeds
-    print("рентабельность выручки {0:.2f}".format(rent))
-    count_workers = create_question("Count workers?", int)
-    print("рибыль фирмы в расчете на одного сотрудника {0:.2f}".format( rent / count_workers))
-else:
-    print("убыток — издержки больше выручки")
+while True:
+    product_number = create_question("product number",str)
+    specifications = {}
 
-# 6
+    specifications["name"] = create_question("product name",str)
+    specifications["cost"] = create_question("product cost",str)
+    specifications["count"] = create_question("product count",str)
+    specifications["unit"] = create_question("product unit",str)
 
-initial_distance = create_question("What distance first day?", int)
-need_distance = create_question("What distance need in day?", int)
-day = 1
+    products.append((product_number,specifications))
+    if exit("quite from products creating?"):
+        break
+
+print("itog list",products)
+
+group_specification = {}
+
+def group_supplier(field_name):
+    group_specification[field_name] = list(set(x[1][field_name] for x in products))
+
+group_supplier("name")
+group_supplier("cost")
+group_supplier("count")
+group_supplier("unit")
+
+print("itog specification",group_specification)
 
 
-def print_distance():
-    print("{0}-й день: {1:.2f}".format(day, initial_distance))
 
-
-print_distance()
-while initial_distance < need_distance:
-    initial_distance += (initial_distance * 0.1)
-    day += 1
-    print_distance()
