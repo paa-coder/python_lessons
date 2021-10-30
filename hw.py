@@ -18,15 +18,15 @@ def exit(question):
 
 # 1
 
-# def devide(x, y):
-#     if (y == 0):
-#         return None
-#     return x / y;
-#
-#
-# result = devide(create_question("enter numerator", int), create_question("enter denominator", int));
-#
-# print(f"result = {result}")
+def devide(x, y):
+    if (y == 0):
+        return None
+    return x / y;
+
+
+result = devide(create_question("enter numerator", int), create_question("enter denominator", int));
+
+print(f"result = {result}")
 
 # 2
 
@@ -68,6 +68,18 @@ print('array_exponent(3,3)=', array_exponent(3, 3))
 
 # 5
 
+def reduce_list_sum(sum=0,spliter=" "):
+    stop_fraze = "exit"
+    fraze = create_question(f"Enter list of number(to finish enter {stop_fraze} ):",str)
+    if fraze==stop_fraze:
+        print(f"sum of list is={sum}")
+        return sum
+
+    for x in filter(lambda num: num.isnumeric(), fraze.split(spliter)):
+        sum+=int(x)
+    return reduce_list_sum(sum)
+
+reduce_list_sum()
 
 # 6 я так понял юзать title не льзя
 
