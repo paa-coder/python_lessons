@@ -1,3 +1,7 @@
+from functools import reduce
+from math import factorial
+
+
 def create_question(question, type):
     try:
         return type(input(question.strip() + " "))
@@ -16,81 +20,42 @@ def exit(question):
     return answer == "y"
 
 
-# 1
-
-def devide(x, y):
-    if (y == 0):
-        return None
-    return x / y;
-
-
-result = devide(create_question("enter numerator", int), create_question("enter denominator", int));
-
-print(f"result = {result}")
-
 # 2
 
-def user_info(name="name", surname="surname", city="city", birthday="birthday", email="email", phone="phone"):
-    print(
-        f"{surname} {name} lives in the city of {city} was born on the {birthday}. Phone number-{phone}, email-{email}")
+def filter_biggest_list(list_numbers):
+    return (list_numbers[x] for x in range(1, len(list_numbers)) if list_numbers[x] > list_numbers[x - 1])
 
 
 print(
-    'query #2: user_info(email="test@test.ru",phone="99-99-99",name="Alex",surname="Smith",city="London",birthday="1987-01-19")')
-user_info(email="test@test.ru", phone="99-99-99", name="Alex", surname="Smith", city="London", birthday="1987-01-19")
-
+    'query #2: filter_biggest_list([x for x in filter_biggest_list([300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55])])')
+print(f"result = {[x for x in filter_biggest_list([300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55])]}")
 
 # 3
-
-def biggest_sum(x, y, z):
-    list = [x, y, z];
-    list.sort(reverse=True)
-    return list[0] + list[1]
+print('answer:[x for x in range(20,241) if x%20==0 or x%21==0]=',
+      [x for x in range(20, 241) if x % 20 == 0 or x % 21 == 0])
 
 
-print('answer:biggest_sum(10,2,7)=', biggest_sum(10, 2, 7))
+# # 4
+def unique(arr):
+    return [x for x in arr if arr.count(x) == 1]
 
 
-# 4
+print('answer:unique([2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11])=',
+      unique([2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11]))
 
-def array_exponent(x, y):
-    if y < 0:
-        return x ** y
-    result = 1
-    for i in range(y):
-        result = result * x
-    return result
+# # 5
+print('answer:reduce(lambda l,r:l*r,[x for x in range(100,1001,2)])=',
+      reduce(lambda l, r: l * r, [x for x in range(100, 1001, 2)]))
 
 
-print('array_exponent(3,0)=', array_exponent(3, 0))
-print('array_exponent(3,3)=', array_exponent(3, 3))
+# 7 я так понял юзать title не льзя
 
 
-# 5
-
-def reduce_list_sum(sum=0,spliter=" "):
-    stop_fraze = "exit"
-    fraze = create_question(f"Enter list of number(to finish enter {stop_fraze} ):",str)
-    if fraze==stop_fraze:
-        print(f"sum of list is={sum}")
-        return sum
-
-    for x in filter(lambda num: num.isnumeric(), fraze.split(spliter)):
-        sum+=int(x)
-    return reduce_list_sum(sum)
-
-reduce_list_sum()
-
-# 6 я так понял юзать title не льзя
-
-def title_word(word):
-    if len(word) > 0:
-        return "".join([word[:1].upper(), word[1:]])
-    return word
+def factorial_generator(number):
+    for x in range(1, number + 1):
+        yield factorial(x)
 
 
-def custom_title(fraze):
-    return " ".join([title_word(k) for k in fraze.split(" ")])
-
-
-print("custom_title('test word fraze 1-num')=", custom_title('test word fraze 1-num'))
+print('query: for x in factorial_generator(14)')
+for x in factorial_generator(14):
+    print(x)
