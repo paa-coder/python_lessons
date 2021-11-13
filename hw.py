@@ -1,172 +1,166 @@
-import os
-from re import sub
-import json
-import pandas as pd
-from functools import reduce
-
-
-def create_question(question, type=str):
-    try:
-        return type(input(question.strip() + " "))
-    except ValueError as e:
-        print("Ошибка: не корректно введено значение")
-        create_question(question, type)
-
-
-root = os.path.dirname(__file__)
-encoding = "utf-8"
-
-
-def get_doc_dir():
-    docs = os.path.join(root, "docs")
-    os.makedirs(docs, exist_ok=True)
-    return docs
-
-
-def line_worker(file, worker) -> int:
-    count = 0
-    while line := file.readline():
-        worker(count, line)
-        count += 1
-    return count
+import time
 
 
 # 1
-def writer():
-    with open(os.path.join(get_doc_dir(), "question1.txt"), "w", encoding=encoding) as file:
-        while s := create_question("new line").strip() != "":
-            print(s, file=file)
+class TrafficLight:
+    def __init__(self):
+        self.__color = None
+
+    def start(self) -> None:
+        self.__to_red()
+
+    def __to_red(self) -> None:
+        self.__color = "red"
+        self.__sleep(7)
+        self.__to_yellow()
+
+    def __to_yellow(self) -> None:
+        self.__color = "yellow"
+        self.__sleep(2)
+        self.__to_green()
+
+    def __to_green(self) -> None:
+        self.__color = "green"
+        self.__sleep(4)
+        self.__color = None
+
+    def __sleep(self, count):
+        print(self.__color)
+        for x in range(1, count + 1):
+            print(x, end=",")
+            time.sleep(1)
+        print("")
 
 
-writer()
+tl = TrafficLight()
+tl.start()
+
+
 # 2
+class Road:
+    def __init__(self, lenght, width):
+        self.__length = lenght
+        self.__width = width
+        self.__weight = 25
+        self.__thick = 5
 
-with open(os.path.join(get_doc_dir(), "question2.txt"), encoding=encoding) as file:
-    x = lambda count, line: print(
-        'in line № {0} {1} words'.format(count + 1,
-                                         len([x for x in sub("[^\sa-zA-Zа-яA-Я0-9]", "", line).split() if x != ""])))
-    print('count lines in file = ', line_worker(file, x))
+    def common_weight(self) -> int:
+        return self.__length * self.__width * self.__weight * self.__thick
+
+
+r = Road(5000, 20)
+print(r.common_weight())
+
 
 # 3
-with open(os.path.join(get_doc_dir(), "question3.txt"), encoding=encoding) as file:
-    data = pd.read_csv(file, sep=";", names=['name', 'salary'])
-    print("salary>20000", data[data.salary >= 20000].name.tolist())
-    print("middle salary = ", data.salary.mean())
+class Worker:
+    def __init__(self, name="name", surname="surname", position="position", wage=600, bonus=800):
+        self._name = name
+        self._surname = surname
+        self._position = position
+        self._sums = {"wage": wage, "bonus": bonus}
+
+
+class Position(Worker):
+
+    def get_full_name(self) -> str:
+        return f"{self._surname} {self._name}"
+
+    def get_total_income(self) -> int:
+        return self._sums["wage"] + self._sums["bonus"]
+
+
+p = Position()
+
+print(p.get_full_name())
+print(p.get_total_income())
+
 
 # 4
-with open(os.path.join(get_doc_dir(), "question4.txt"), encoding=encoding) as file:
-    dict = {
-        "One": "Один",
-        "Two": "Два",
-        "Three": "Три",
-        "Four": "Четыре"
-    }
-    data = file.read()
-    for k, v in dict.items():
-        data = data.replace(k, v)
-    with open(os.path.join(get_doc_dir(), "question4_copy.txt"), "w", encoding=encoding) as copy:
-        copy.write(data)
+class Car:
+    def __init__(self, speed=20, color="red", name=None, is_police=False):
+        self.speed = speed
+        self.color = color
+        self.position = name
+        self.is_police = is_police
+
+    def go(self):
+        print("go")
+
+    def stop(self):
+        print("stop")
+
+    def turn(self, diretion):
+        print(f"turn on {diretion}")
+
+    def show_speed(self):
+        return self.speed
+
+
+class TownCar(Car):
+    def __init__(self, speed=60, color="red"):
+        super().__init__(speed, color, "TownCar")
+
+    def show_speed(self):
+        if self.speed > 60:
+            return "сообщение о превышении скорости"
+        return self.speed
+
+
+class SportCar(Car):
+    def __init__(self, speed=80, color="red"):
+        super().__init__(speed, color, "SportCar")
+
+
+class WorkCar(Car):
+    def __init__(self, speed=40, color="WorkCar"):
+        super().__init__(speed, color, "SportCar")
+
+    def show_speed(self):
+        if self.speed > 40:
+            return "сообщение о превышении скорости"
+        return self.speed
+
+
+class PoliceCar(Car):
+    def __init__(self, speed=100):
+        super().__init__(speed, color="blue", name="PoliceCar", is_police=True)
+
+
+spc = SportCar()
+print(spc.show_speed())
+wc = WorkCar()
+print(wc.show_speed())
+wc.speed = 100
+print(wc.show_speed())
+
 
 # 5
-with open(os.path.join(get_doc_dir(), "question5.txt"), "w", encoding=encoding) as file:
-    file.write(" ".join([f"{x}" for x in range(25)]))
-with open(os.path.join(get_doc_dir(), "question5.txt"), encoding=encoding) as file:
-    print("sum of question5.txt = ", reduce(lambda l, r: l + r, [int(x) for x in file.read().split(" ")]))
 
-# 6
-with open(os.path.join(get_doc_dir(), "question6.txt"), encoding=encoding) as file:
-    data = pd.read_csv(file, sep=" ", names=['name', 'lec', "lab", "p"])
+class Stationery:
+    def __init__(self, title=""):
+        self._title = title
 
-
-    def to_int(x):
-        num = sub("[^0-9]", "", x)
-        return int(num) if num != "" else 0
+    def draw(self):
+        return f"Запуск отрисовки.{self._title}"
 
 
-    def cleaner(x):
-        if x.name == 'name':
-            return [sub("[^\sa-zA-Zа-яA-Я0-9]", "", z) for z in data.name]
-        return [to_int(z) for z in data[x.name]]
+class Pen(Stationery):
+    def __init__(self) -> None:
+        super().__init__(title="Pen")
 
 
-    data = data.apply(cleaner)
-
-    dict = {}
-    for _, row in data.iterrows():
-        dict[row["name"]] = row['lec'] + row['lab'] + row["p"]
-
-with open(os.path.join(get_doc_dir(), "question7.txt"), encoding=encoding) as file:
-    data = pd.read_csv(file, sep=" ", names=["name", "ownership", "proceeds", "costs"])
-
-    data['profit'] = data.apply(lambda row: row['proceeds'] - row['costs'], axis=1)
-
-    firm_profits = {}
-    for _, row in data.iterrows():
-        firm_profits[row["name"]] = row["profit"]
-
-    results = [firm_profits, {"average_profit": data[data.profit > 0].profit.mean()}]
-    with open(os.path.join(get_doc_dir(), "question7.json"), 'w',encoding=encoding) as outfile:
-        json.dump(results, outfile,indent=4)
+class Handle(Stationery):
+    def __init__(self) -> None:
+        super().__init__(title="Handle")
 
 
-# from functools import reduce
-# from math import factorial
-#
-#
-# def create_question(question, type):
-#     try:
-#         return type(input(question.strip() + " "))
-#     except ValueError as e:
-#         print("Ошибка: не корректно введено значение")
-#         create_question(question, type)
-#
-#
-# def exit(question):
-#     answer = None
-#     while answer not in ["y", "n"]:
-#         if answer != None:
-#             print("accept only y or n")
-#         answer = create_question(f"{question} [y/n]:", str)
-#
-#     return answer == "y"
-#
-#
-# # 2
-#
-# def filter_biggest_list(list_numbers):
-#     return (list_numbers[x] for x in range(1, len(list_numbers)) if list_numbers[x] > list_numbers[x - 1])
-#
-#
-# print(
-#     'query #2: filter_biggest_list([x for x in filter_biggest_list([300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55])])')
-# print(f"result = {[x for x in filter_biggest_list([300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55])]}")
-#
-# # 3
-# print('answer:[x for x in range(20,241) if x%20==0 or x%21==0]=',
-#       [x for x in range(20, 241) if x % 20 == 0 or x % 21 == 0])
-#
-#
-# # # 4
-# def unique(arr):
-#     return [x for x in arr if arr.count(x) == 1]
-#
-#
-# print('answer:unique([2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11])=',
-#       unique([2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11]))
-#
-# # # 5
-# print('answer:reduce(lambda l,r:l*r,[x for x in range(100,1001,2)])=',
-#       reduce(lambda l, r: l * r, [x for x in range(100, 1001, 2)]))
-#
-#
-# # 7 я так понял юзать title не льзя
-#
-#
-# def factorial_generator(number):
-#     for x in range(1, number + 1):
-#         yield factorial(x)
-#
-#
-# print('query: for x in factorial_generator(14)')
-# for x in factorial_generator(14):
-#     print(x)
+class Pencil(Stationery):
+    def __init__(self) -> None:
+        super().__init__(title="Pencil")
+
+
+print(Stationery().draw())
+print(Pen().draw())
+print(Handle().draw())
+print(Pencil().draw())
